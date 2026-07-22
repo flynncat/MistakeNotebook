@@ -1,2 +1,0 @@
-[console_scripts]
-mistake-book = mistake_book.app:main
