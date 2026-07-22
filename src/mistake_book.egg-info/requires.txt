@@ -1,0 +1,13 @@
+fastapi<1,>=0.115
+httpx<1,>=0.27
+numpy<3,>=1.26
+opencv-python-headless<5,>=4.10
+pillow<12,>=10.4
+pillow-heif<2,>=0.18
+python-multipart<1,>=0.0.12
+reportlab<5,>=4.2
+uvicorn[standard]<1,>=0.30
+
+[dev]
+pytest<9,>=8.3
+pytest-cov<7,>=5

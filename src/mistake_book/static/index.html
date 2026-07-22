@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>小奥错题集</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f1ea; color: #20201d; }
+    main { width: min(1180px, calc(100% - 32px)); margin: 28px auto 80px; }
+    header { display: flex; gap: 20px; align-items: end; justify-content: space-between; margin-bottom: 20px; }
+    h1 { margin: 0 0 5px; font-size: 28px; }
+    p { margin: 0; color: #68665f; }
+    .panel { background: white; border: 1px solid #dedbd2; border-radius: 14px; padding: 18px; box-shadow: 0 5px 18px #27251f0a; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    button, .file-label { border: 0; border-radius: 9px; padding: 10px 15px; background: #222; color: white; font: inherit; cursor: pointer; }
+    button.secondary, .file-label { background: #ece9e1; color: #282722; }
+    button.warning { background: #9e4b37; }
+    button:disabled { opacity: .45; cursor: wait; }
+    input[type=file] { display: none; }
+    #status { margin-left: auto; font-size: 14px; color: #68665f; }
+    #problems { display: grid; gap: 16px; margin-top: 18px; }
+    .problem { background: white; border: 1px solid #dedbd2; border-radius: 14px; overflow: hidden; }
+    .problem-head { padding: 12px 16px; display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eeeae2; }
+    .badge { display: inline-block; border-radius: 999px; background: #ebe8df; padding: 3px 9px; font-size: 12px; }
+    .badge.review { color: #8b3a26; background: #f7ded7; }
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #dedbd2; }
+    figure { margin: 0; background: #f9f8f4; padding: 10px; min-width: 0; }
+    figcaption { font-size: 12px; color: #6c6960; margin-bottom: 7px; }
+    figure img { display: block; width: 100%; height: 360px; object-fit: contain; background: #e7e4dc; }
+    .details { padding: 14px 16px; display: grid; gap: 9px; }
+    .ocr { white-space: pre-wrap; max-height: 100px; overflow: auto; font-size: 13px; color: #4f4d47; }
+    .reason { color: #9e4b37; font-size: 13px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .actions button { padding: 7px 11px; font-size: 13px; }
+    .empty { text-align: center; padding: 60px 20px; color: #77736a; }
+    @media (max-width: 720px) {
+      header { align-items: start; flex-direction: column; }
+      .comparison { grid-template-columns: 1fr; }
+      figure img { height: 260px; }
+      #status { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>小奥错题集</h1>
+      <p>校正纸面、保守清除标注、自动归类并生成 A4 PDF</p>
+    </div>
+  </header>
+  <section class="panel toolbar">
+    <label class="file-label" for="files">选择照片</label>
+    <input id="files" type="file" accept=".jpg,.jpeg,.png,.webp,.heic" multiple>
+    <button class="secondary" id="sample">处理 Sample 目录</button>
+    <button id="export" disabled>导出 A4 PDF</button>
+    <button class="secondary" id="partial" disabled>跳过待确认并导出</button>
+    <span id="status">等待导入</span>
+  </section>
+  <section id="problems"><div class="empty">选择照片或直接处理 Sample 测试图片</div></section>
+</main>
+<script>
+  const token = "__SESSION_TOKEN__";
+  const headers = { "X-Session-Token": token };
+  let batchId = null;
+  let timer = null;
+
+  const statusNode = document.querySelector("#status");
+  const problemsNode = document.querySelector("#problems");
+  const exportButton = document.querySelector("#export");
+  const partialButton = document.querySelector("#partial");
+
+  async function api(url, options = {}) {
+    options.headers = { ...headers, ...(options.headers || {}) };
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      let message = `请求失败（${response.status}）`;
+      try { message = (await response.json()).detail || message; } catch (_) {}
+      throw new Error(message);
+    }
+    return response.json();
+  }
+
+  document.querySelector("#files").addEventListener("change", async event => {
+    const files = [...event.target.files];
+    if (!files.length) return;
+    const form = new FormData();
+    files.forEach(file => form.append("files", file));
+    await start(() => api("/api/batches", { method: "POST", body: form }), `正在导入 ${files.length} 张图片…`);
+  });
+
+  document.querySelector("#sample").addEventListener("click", () =>
+    start(() => api("/api/batches/import-sample", { method: "POST" }), "正在导入 Sample…")
+  );
+
+  async function start(operation, message) {
+    clearInterval(timer);
+    statusNode.textContent = message;
+    try {
+      const batch = await operation();
+      batchId = batch.id;
+      render(batch);
+      timer = setInterval(refresh, 1500);
+    } catch (error) {
+      statusNode.textContent = error.message;
+    }
+  }
+
+  async function refresh() {
+    if (!batchId) return;
+    try {
+      const batch = await api(`/api/batches/${batchId}`);
+      render(batch);
+      if (!["processing"].includes(batch.status)) clearInterval(timer);
+    } catch (error) {
+      clearInterval(timer);
+      statusNode.textContent = error.message;
+    }
+  }
+
+  function render(batch) {
+    const counts = batch.problems.reduce((map, item) => {
+      map[item.status] = (map[item.status] || 0) + 1;
+      return map;
+    }, {});
+    statusNode.textContent = `批次 ${batch.id.slice(0, 8)} · ${batch.status} · ${batch.problems.length} 道题`;
+    const pending = batch.problems.some(item => item.review_status === "pending");
+    const processing = batch.problems.some(item => ["queued", "processing"].includes(item.status));
+    exportButton.disabled = processing || pending || !batch.problems.length;
+    partialButton.disabled = processing || !batch.problems.some(item => item.status === "ready");
+    problemsNode.innerHTML = batch.problems.map(problemCard).join("") || '<div class="empty">暂无题目</div>';
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
+  }
+
+  function problemCard(item) {
+    const reasons = item.metrics?.review_reasons || (item.error ? [item.error] : []);
+    const isReview = item.review_status === "pending";
+    return `
+      <article class="problem">
+        <div class="problem-head">
+          <strong>${escapeHtml(item.filename)}</strong>
+          <span class="badge ${isReview ? "review" : ""}">${escapeHtml(item.status)}</span>
+        </div>
+        <div class="comparison">
+          <figure><figcaption>展平及背景校正</figcaption><img loading="lazy" src="${item.images.normalized}" onerror="this.style.opacity=.15"></figure>
+          <figure><figcaption>题干与配图提取结果</figcaption><img loading="lazy" src="${item.images.cleaned}" onerror="this.style.opacity=.15"></figure>
+        </div>
+        <div class="details">
+          <div><b>分类：</b>${escapeHtml(item.category || "处理中")}</div>
+          <div><b>识别置信度：</b>${Math.round((item.confidence || 0) * 100)}%</div>
+          ${reasons.map(reason => `<div class="reason">需确认：${escapeHtml(reason)}</div>`).join("")}
+          <div class="ocr">${escapeHtml(item.ocr_text || "")}</div>
+          ${isReview ? `<div class="actions">
+            <button onclick="review('${item.id}','accept_cleaned')">接受清理结果</button>
+            <button class="secondary" onclick="review('${item.id}','accept_normalized')">保留原标注</button>
+            <button class="warning" onclick="review('${item.id}','exclude')">排除</button>
+          </div>` : ""}
+        </div>
+      </article>`;
+  }
+
+  async function review(problemId, action) {
+    try {
+      await api(`/api/problems/${problemId}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action })
+      });
+      await refresh();
+    } catch (error) { statusNode.textContent = error.message; }
+  }
+
+  async function createPdf(allowPartial) {
+    if (!batchId) return;
+    try {
+      const result = await api(`/api/batches/${batchId}/export`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ allow_partial: allowPartial })
+      });
+      window.location.href = result.download_url;
+    } catch (error) { statusNode.textContent = error.message; }
+  }
+  exportButton.addEventListener("click", () => createPdf(false));
+  partialButton.addEventListener("click", () => createPdf(true));
+</script>
+</body>
+</html>

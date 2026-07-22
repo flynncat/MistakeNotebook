@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: mistake-book
+Version: 0.1.0
+Summary: 本地小奥错题照片整理与 A4 PDF 生成工具
+Requires-Python: >=3.11
+Requires-Dist: fastapi<1,>=0.115
+Requires-Dist: httpx<1,>=0.27
+Requires-Dist: numpy<3,>=1.26
+Requires-Dist: opencv-python-headless<5,>=4.10
+Requires-Dist: pillow<12,>=10.4
+Requires-Dist: pillow-heif<2,>=0.18
+Requires-Dist: python-multipart<1,>=0.0.12
+Requires-Dist: reportlab<5,>=4.2
+Requires-Dist: uvicorn[standard]<1,>=0.30
+Provides-Extra: dev
+Requires-Dist: pytest<9,>=8.3; extra == "dev"
+Requires-Dist: pytest-cov<7,>=5; extra == "dev"

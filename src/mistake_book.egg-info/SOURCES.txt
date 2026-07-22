@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+src/mistake_book/__init__.py
+src/mistake_book/app.py
+src/mistake_book/config.py
+src/mistake_book/image_pipeline.py
+src/mistake_book/pdf_export.py
+src/mistake_book/recognition.py
+src/mistake_book/storage.py
+src/mistake_book.egg-info/PKG-INFO
+src/mistake_book.egg-info/SOURCES.txt
+src/mistake_book.egg-info/dependency_links.txt
+src/mistake_book.egg-info/entry_points.txt
+src/mistake_book.egg-info/requires.txt
+src/mistake_book.egg-info/top_level.txt
+src/mistake_book/helpers/vision_ocr.swift
+src/mistake_book/static/index.html
