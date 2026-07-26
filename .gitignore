@@ -1,12 +1,44 @@
+# Operating systems and editors
 .DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+.cursor/
+
+# Python environments, caches, and build output
 .venv/
+venv/
+env/
 *.egg-info/
+build/
+dist/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .coverage
+coverage.xml
 htmlcov/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.log
+
+# User data, exports, generated reports, and downloaded runtimes
 data/
 output/
+.models/
+models/weights/
+models/**/*.pth
+models/**/*.pkl
+models/**/*.onnx
 Sample/
+目标效果/
 .superpowers/
+
+# Machine-specific service file; commit only the portable example.
+scripts/com.cursor.mistake-book.plist
