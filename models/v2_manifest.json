@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "models": [
+    {
+      "id": "uvdoc",
+      "purpose": "document_dewarping",
+      "repository": "https://github.com/tanguymagne/uvdoc",
+      "commit": "4c9b82b537057aff2526e6dd118a847cdd072e82",
+      "license": "MIT",
+      "weight_file": "model/best_model.pkl",
+      "weight_sha256": "7e90861b8a516eb4bc51f84bd889cb77275743d2d1d3ca8091951ec9f2b7da23",
+      "weight_bytes": 32158393,
+      "runtime": "PyTorch",
+      "mac_support": "cpu_or_mps_benchmark_required"
+    },
+    {
+      "id": "handwriting-dis",
+      "purpose": "handwriting_segmentation",
+      "status": "rejected_after_sample_benchmark",
+      "rejection_reason": "low-contrast pencil handwriting was not detected reliably",
+      "repository": "https://github.com/ivanhe123/Handwriting-Removal-DIS",
+      "commit": "5c25267e137288dbed1ff84fc8d208ca2c062b38",
+      "base_repository": "https://github.com/xuebinqin/DIS",
+      "base_commit": "b6764e20381f6f42a70f83fa3324181529ed1403",
+      "license": "MIT/Apache-2.0",
+      "weight_repository": "Inoob/DIS-Handwriting-Remover",
+      "weight_revision": "cdc04cd4a4be40315b3c528a553f17807d040aa3",
+      "weight_file": "isnet.pth",
+      "weight_sha256": "d685cc76a8c4d6aebf9a82499b7771d13aaa27ebd90e933036bdd004db4beefa",
+      "weight_bytes": 176718414,
+      "runtime": "PyTorch",
+      "mac_support": "cpu_or_mps_benchmark_required"
+    },
+    {
+      "id": "pix2text-mfd-1.5",
+      "purpose": "mathematical_formula_detection",
+      "repository": "breezedeus/pix2text-mfd-1.5",
+      "revision": "f470a885e0fca1d3d2bfa2a54991db7ae01f1861",
+      "license": "MIT",
+      "weight_file": "pix2text-mfd-1.5.onnx",
+      "weight_sha256": "40d4fc852d99bcbf25a9478897d2f49fbbb8f7fdd6569c088cd1c31386293bd7",
+      "weight_bytes": 80311115,
+      "runtime": "Pix2Text 1.1.6 / ONNX Runtime",
+      "mac_support": "cpu"
+    },
+    {
+      "id": "unimernet-tiny",
+      "purpose": "latex_formula_recognition",
+      "source_repository": "https://github.com/opendatalab/UniMERNet",
+      "source_commit": "5a2c80d96b1d2dba447ff18d873e5fb73ba03c35",
+      "repository": "wanderkid/unimernet_tiny",
+      "revision": "3f09ac4b1cd583be47ea20a7d7daef839473028a",
+      "license": "Apache-2.0",
+      "weight_file": "unimernet_tiny.pth",
+      "weight_sha256": "6f7608624e2d7549c7f0f05fcfbe073ae521328cf70f1d46374d96f9881d7371",
+      "weight_bytes": 430075701,
+      "runtime": "UniMERNet 0.2.3 / PyTorch",
+      "mac_support": "mps_with_cpu_fallback"
+    }
+  ]
+}

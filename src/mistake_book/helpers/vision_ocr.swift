@@ -19,11 +19,18 @@ do {
     let observations = request.results ?? []
     var lines: [[String: Any]] = []
     for observation in observations {
-        guard let candidate = observation.topCandidates(1).first else { continue }
+        let candidates = observation.topCandidates(3)
+        guard let candidate = candidates.first else { continue }
         let box = observation.boundingBox
         lines.append([
             "text": candidate.string,
             "confidence": Double(candidate.confidence),
+            "alternatives": candidates.map {
+                [
+                    "text": $0.string,
+                    "confidence": Double($0.confidence)
+                ]
+            },
             "box": [
                 Double(box.origin.x),
                 Double(box.origin.y),

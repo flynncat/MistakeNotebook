@@ -35,11 +35,14 @@ def _resize_for_processing(image: np.ndarray, maximum: int = 2600) -> np.ndarray
     )
 
 
-def load_image(path: Path) -> np.ndarray:
+def load_image(path: Path, maximum: int = 2600) -> np.ndarray:
     with Image.open(path) as source:
         rgb = ImageOps.exif_transpose(source).convert("RGB")
         array = np.asarray(rgb)
-    return _resize_for_processing(cv2.cvtColor(array, cv2.COLOR_RGB2BGR))
+    return _resize_for_processing(
+        cv2.cvtColor(array, cv2.COLOR_RGB2BGR),
+        maximum=maximum,
+    )
 
 
 def _text_horizontal_score(image: np.ndarray) -> float:

@@ -15,7 +15,12 @@
     .panel { background: white; border: 1px solid #dedbd2; border-radius: 14px; padding: 18px; box-shadow: 0 5px 18px #27251f0a; }
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     button, .file-label { border: 0; border-radius: 9px; padding: 10px 15px; background: #222; color: white; font: inherit; cursor: pointer; }
+    input[type=text], textarea, select { width: 100%; border: 1px solid #d7d3ca; border-radius: 8px; padding: 9px; font: inherit; background: #fff; color: inherit; }
+    textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
     button.secondary, .file-label { background: #ece9e1; color: #282722; }
+    .formula-choice { transition: background .15s ease, color .15s ease, box-shadow .15s ease; }
+    .formula-choice[aria-pressed="true"] { background: #222; color: white; box-shadow: 0 0 0 2px #2224; }
+    .formula-choice[aria-pressed="false"] { background: #ece9e1; color: #282722; box-shadow: none; }
     button.warning { background: #9e4b37; }
     button:disabled { opacity: .45; cursor: wait; }
     input[type=file] { display: none; }
@@ -24,22 +29,65 @@
     .problem { background: white; border: 1px solid #dedbd2; border-radius: 14px; overflow: hidden; }
     .problem-head { padding: 12px 16px; display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eeeae2; }
     .badge { display: inline-block; border-radius: 999px; background: #ebe8df; padding: 3px 9px; font-size: 12px; }
-    .badge.review { color: #8b3a26; background: #f7ded7; }
+    .badge.review { color: #765817; background: #f5e9c8; }
     .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #dedbd2; }
     figure { margin: 0; background: #f9f8f4; padding: 10px; min-width: 0; }
     figcaption { font-size: 12px; color: #6c6960; margin-bottom: 7px; }
     figure img { display: block; width: 100%; height: 360px; object-fit: contain; background: #e7e4dc; }
     .details { padding: 14px 16px; display: grid; gap: 9px; }
     .ocr { white-space: pre-wrap; max-height: 100px; overflow: auto; font-size: 13px; color: #4f4d47; }
-    .reason { color: #9e4b37; font-size: 13px; }
+    .diagnostic { border-left: 3px solid; padding: 7px 10px; font-size: 13px; line-height: 1.45; }
+    .diagnostic strong { display: block; margin-bottom: 2px; }
+    .diagnostic.critical { color: #8b3324; border-color: #b94b37; background: #fbefec; }
+    .diagnostic.warning { color: #765817; border-color: #c19732; background: #faf4df; }
+    .diagnostic.info { color: #5d5b55; border-color: #aaa69d; background: #f3f2ee; }
     .actions { display: flex; flex-wrap: wrap; gap: 8px; }
     .actions button { padding: 7px 11px; font-size: 13px; }
+    .library-tools { margin-top: 14px; display: grid; grid-template-columns: auto minmax(180px, 1fr) 150px 170px 130px; gap: 10px; align-items: center; }
+    .view-toggle { display: flex; gap: 6px; }
+    .view-toggle button { white-space: nowrap; }
+    .view-toggle button.inactive { background: #ece9e1; color: #282722; }
+    .meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 12px; color: #68665f; font-size: 13px; }
+    .category-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .badge.group { background: #dfe9e4; color: #315a48; }
+    .edit-classification { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .formula-review { border: 1px solid #ddd8ce; border-radius: 10px; padding: 12px; display: grid; gap: 10px; background: #faf9f5; }
+    .formula-review h3 { margin: 0; font-size: 15px; }
+    .formula-item { display: grid; grid-template-columns: 150px 150px minmax(220px, 1fr); gap: 10px; align-items: start; padding-top: 10px; border-top: 1px solid #e8e4dc; }
+    .formula-item:first-of-type { border-top: 0; padding-top: 0; }
+    .formula-crop { width: 100%; height: 86px; object-fit: contain; background: white; border: 1px solid #e1ddd3; border-radius: 7px; }
+    .formula-edit { display: grid; gap: 7px; }
+    .formula-edit input { font-family: "SFMono-Regular", Consolas, monospace; }
+    .formula-preview { min-height: 44px; padding: 7px 9px; overflow: auto; background: white; border: 1px solid #e1ddd3; border-radius: 7px; }
+    .formula-error { color: #8b3324; font-size: 12px; }
+    .drawer-backdrop { position: fixed; inset: 0; background: #24231f55; z-index: 20; display: none; }
+    .drawer-backdrop.open { display: block; }
+    .taxonomy-drawer { position: fixed; z-index: 21; top: 0; right: 0; width: min(520px, 94vw); height: 100vh; background: #f9f8f4; box-shadow: -12px 0 36px #27251f2b; transform: translateX(105%); transition: transform .2s ease; display: flex; flex-direction: column; }
+    .taxonomy-drawer.open { transform: translateX(0); }
+    .drawer-head, .drawer-foot { padding: 16px 18px; background: white; border-bottom: 1px solid #dedbd2; display: flex; align-items: center; gap: 10px; }
+    .drawer-head h2 { margin: 0; font-size: 20px; flex: 1; }
+    .drawer-foot { border-top: 1px solid #dedbd2; border-bottom: 0; justify-content: flex-end; }
+    .taxonomy-body { padding: 16px; overflow: auto; display: grid; gap: 12px; flex: 1; }
+    #taxonomy-editor { display: grid; gap: 10px; }
+    .taxonomy-group { background: white; border: 1px solid #dedbd2; border-radius: 11px; padding: 12px; display: grid; gap: 9px; }
+    .taxonomy-group-head, .taxonomy-item { display: flex; align-items: center; gap: 8px; }
+    .taxonomy-group-head strong { flex: 1; }
+    .taxonomy-item { padding: 7px 9px; background: #f4f2ec; border-radius: 7px; }
+    .taxonomy-item span:first-child { flex: 1; }
+    .taxonomy-item.inactive, .taxonomy-group.inactive { opacity: .58; }
+    .taxonomy-add { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .taxonomy-add button, .taxonomy-group button { padding: 7px 10px; font-size: 13px; }
+    .taxonomy-note { font-size: 13px; color: #68665f; line-height: 1.5; }
     .empty { text-align: center; padding: 60px 20px; color: #77736a; }
     @media (max-width: 720px) {
       header { align-items: start; flex-direction: column; }
       .comparison { grid-template-columns: 1fr; }
       figure img { height: 260px; }
       #status { width: 100%; margin-left: 0; }
+      .library-tools { grid-template-columns: 1fr 1fr; }
+      .library-tools .view-toggle, .library-tools input { grid-column: 1 / -1; }
+      .formula-item { grid-template-columns: 1fr 1fr; }
+      .formula-edit { grid-column: 1 / -1; }
     }
   </style>
 </head>
@@ -48,29 +96,83 @@
   <header>
     <div>
       <h1>小奥错题集</h1>
-      <p>校正纸面、保守清除标注、自动归类并生成 A4 PDF</p>
+      <p>神经展平、双 OCR 校验、白底重建并生成 Word DOCX / Obsidian Markdown</p>
     </div>
   </header>
   <section class="panel toolbar">
     <label class="file-label" for="files">选择照片</label>
     <input id="files" type="file" accept=".jpg,.jpeg,.png,.webp,.heic" multiple>
-    <button class="secondary" id="sample">处理 Sample 目录</button>
-    <button id="export" disabled>导出 A4 PDF</button>
-    <button class="secondary" id="partial" disabled>跳过待确认并导出</button>
+    <button class="secondary" id="folder" type="button">选择文件夹</button>
+    <input id="folder-fallback" type="file" accept=".jpg,.jpeg,.png,.webp,.heic" webkitdirectory directory multiple>
+    <button id="bulk-accept" disabled>一键保存修订并接受</button>
+    <button id="export" disabled>导出 Word DOCX</button>
+    <button id="export-markdown" disabled>导出 Obsidian Markdown</button>
+    <button class="secondary" id="partial" disabled>跳过待确认并导出 DOCX</button>
+    <button class="secondary" id="manage-taxonomy" type="button">分类管理</button>
     <span id="status">等待导入</span>
   </section>
-  <section id="problems"><div class="empty">选择照片或直接处理 Sample 测试图片</div></section>
+  <section class="panel library-tools">
+    <div class="view-toggle">
+      <button id="current-view">当前批次</button>
+      <button id="asset-view" class="inactive">已处理资产</button>
+    </div>
+    <input id="search" type="text" placeholder="搜索题干或文件名">
+    <select id="group-filter"><option value="">全部领域</option></select>
+    <select id="category-filter"><option value="">全部题型</option></select>
+    <select id="time-sort">
+      <option value="newest">时间：最新优先</option>
+      <option value="oldest">时间：最早优先</option>
+    </select>
+  </section>
+  <section id="problems"><div class="empty">选择照片或文件夹开始处理</div></section>
 </main>
+<div class="drawer-backdrop" id="taxonomy-backdrop"></div>
+<aside class="taxonomy-drawer" id="taxonomy-drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>分类管理</h2>
+    <button class="secondary" id="close-taxonomy" type="button">关闭</button>
+  </div>
+  <div class="taxonomy-body">
+    <p class="taxonomy-note">删除会停用分类，不会清除历史题目的标签。自定义分类只用于人工选择。</p>
+    <div class="taxonomy-add">
+      <input id="new-group-name" type="text" maxlength="12" placeholder="新增一级领域">
+      <button id="add-group" type="button">添加领域</button>
+    </div>
+    <div id="taxonomy-editor"></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="secondary" id="cancel-taxonomy" type="button">取消</button>
+    <button id="save-taxonomy" type="button">保存更改</button>
+  </div>
+</aside>
 <script>
   const token = "__SESSION_TOKEN__";
   const headers = { "X-Session-Token": token };
   let batchId = null;
+  let currentBatch = null;
+  let viewMode = "current";
+  let taxonomy = [];
+  let filterTaxonomy = [];
+  let taxonomyConfig = null;
+  let taxonomyDraft = null;
   let timer = null;
+  let searchTimer = null;
 
   const statusNode = document.querySelector("#status");
   const problemsNode = document.querySelector("#problems");
   const exportButton = document.querySelector("#export");
+  const markdownButton = document.querySelector("#export-markdown");
   const partialButton = document.querySelector("#partial");
+  const bulkAcceptButton = document.querySelector("#bulk-accept");
+  const currentViewButton = document.querySelector("#current-view");
+  const assetViewButton = document.querySelector("#asset-view");
+  const searchInput = document.querySelector("#search");
+  const groupFilter = document.querySelector("#group-filter");
+  const categoryFilter = document.querySelector("#category-filter");
+  const timeSort = document.querySelector("#time-sort");
+  const taxonomyDrawer = document.querySelector("#taxonomy-drawer");
+  const taxonomyBackdrop = document.querySelector("#taxonomy-backdrop");
+  const taxonomyEditor = document.querySelector("#taxonomy-editor");
 
   async function api(url, options = {}) {
     options.headers = { ...headers, ...(options.headers || {}) };
@@ -78,30 +180,329 @@
     if (!response.ok) {
       let message = `请求失败（${response.status}）`;
       try { message = (await response.json()).detail || message; } catch (_) {}
+      if (response.status === 403 && message.includes("会话令牌无效")) {
+        window.location.reload();
+        throw new Error("页面会话已更新，正在自动刷新…");
+      }
       throw new Error(message);
     }
     return response.json();
   }
 
-  document.querySelector("#files").addEventListener("change", async event => {
-    const files = [...event.target.files];
-    if (!files.length) return;
-    const form = new FormData();
-    files.forEach(file => form.append("files", file));
-    await start(() => api("/api/batches", { method: "POST", body: form }), `正在导入 ${files.length} 张图片…`);
+  async function initializeLibrary() {
+    try {
+      const result = await api("/api/taxonomy");
+      taxonomyConfig = result;
+      applyTaxonomyConfig(result);
+    } catch (error) {
+      statusNode.textContent = error.message;
+    }
+  }
+
+  function applyTaxonomyConfig(result) {
+      const previousGroup = groupFilter.value;
+      const previousCategory = categoryFilter.value;
+      const groups = result.groups || [];
+      taxonomy = groups.filter(group => group.active).map(group => ({
+        name: group.name,
+        categories: (group.categories || []).filter(category => category.active).map(category => category.name)
+      })).filter(group => group.categories.length);
+      filterTaxonomy = groups.map(group => ({
+        name: group.name,
+        inactive: !group.active,
+        categories: (group.categories || []).filter(
+          category => category.active || category.usage_count > 0
+        ).map(category => ({
+          name: category.name,
+          inactive: !category.active
+        }))
+      })).filter(group => group.categories.length);
+      groupFilter.innerHTML = '<option value="">全部领域</option>' +
+        filterTaxonomy.map(group => `<option value="${escapeHtml(group.name)}">${escapeHtml(group.name)}${group.inactive ? "（已停用）" : ""}</option>`).join("");
+      if (filterTaxonomy.some(group => group.name === previousGroup)) groupFilter.value = previousGroup;
+      updateCategoryFilter(previousCategory);
+  }
+
+  function updateCategoryFilter(selected = "") {
+    const group = filterTaxonomy.find(item => item.name === groupFilter.value);
+    const categories = group?.categories || [];
+    categoryFilter.innerHTML = '<option value="">全部题型</option>' +
+      categories.map(category => `<option value="${escapeHtml(category.name)}" ${category.name === selected ? "selected" : ""}>${escapeHtml(category.name)}${category.inactive ? "（已停用）" : ""}</option>`).join("");
+    categoryFilter.disabled = !group;
+  }
+
+  async function switchView(mode) {
+    viewMode = mode;
+    currentViewButton.classList.toggle("inactive", mode !== "current");
+    assetViewButton.classList.toggle("inactive", mode !== "assets");
+    bulkAcceptButton.disabled = mode !== "current";
+    markdownButton.disabled = mode !== "current";
+    if (mode === "assets") {
+      await loadAssets();
+    } else if (currentBatch) {
+      render(currentBatch);
+    } else {
+      bulkAcceptButton.disabled = true;
+      markdownButton.disabled = true;
+      statusNode.textContent = "尚未导入当前批次";
+      problemsNode.innerHTML = '<div class="empty">选择照片或文件夹开始新批次，或查看已处理资产</div>';
+    }
+  }
+
+  async function loadAssets() {
+    const parameters = new URLSearchParams({
+      sort: timeSort.value,
+      limit: "100"
+    });
+    if (groupFilter.value) parameters.set("category_group", groupFilter.value);
+    if (categoryFilter.value) parameters.set("category", categoryFilter.value);
+    if (searchInput.value.trim()) parameters.set("q", searchInput.value.trim());
+    statusNode.textContent = "正在查询历史题目…";
+    try {
+      const result = await api(`/api/assets?${parameters}`);
+      statusNode.textContent = `已处理资产 · 找到 ${result.total} 道题`;
+      problemsNode.innerHTML = result.items.map(item => problemCard(item, false)).join("") ||
+        '<div class="empty">没有符合条件的已处理资产</div>';
+      initializeFormulaPreviews();
+    } catch (error) {
+      statusNode.textContent = error.message;
+    }
+  }
+
+  currentViewButton.addEventListener("click", () => switchView("current"));
+  assetViewButton.addEventListener("click", () => switchView("assets"));
+  groupFilter.addEventListener("change", () => {
+    updateCategoryFilter();
+    if (viewMode === "assets") loadAssets();
+    else if (currentBatch) render(currentBatch);
+  });
+  categoryFilter.addEventListener("change", () => {
+    if (viewMode === "assets") loadAssets();
+    else if (currentBatch) render(currentBatch);
+  });
+  timeSort.addEventListener("change", () => {
+    if (viewMode === "assets") loadAssets();
+    else if (currentBatch) render(currentBatch);
+  });
+  searchInput.addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      if (viewMode === "assets") loadAssets();
+      else if (currentBatch) render(currentBatch);
+    }, 280);
+  });
+  initializeLibrary();
+
+  async function openTaxonomyManager() {
+    try {
+      taxonomyConfig = await api("/api/taxonomy");
+      taxonomyDraft = JSON.parse(JSON.stringify(taxonomyConfig));
+      renderTaxonomyEditor();
+      taxonomyDrawer.classList.add("open");
+      taxonomyBackdrop.classList.add("open");
+      taxonomyDrawer.setAttribute("aria-hidden", "false");
+    } catch (error) {
+      statusNode.textContent = error.message;
+    }
+  }
+
+  function closeTaxonomyManager() {
+    taxonomyDraft = null;
+    taxonomyDrawer.classList.remove("open");
+    taxonomyBackdrop.classList.remove("open");
+    taxonomyDrawer.setAttribute("aria-hidden", "true");
+  }
+
+  function renderTaxonomyEditor() {
+    const groups = taxonomyDraft?.groups || [];
+    taxonomyEditor.innerHTML = groups.map((group, groupIndex) => `
+      <section class="taxonomy-group ${group.active ? "" : "inactive"}">
+        <div class="taxonomy-group-head">
+          <strong>${escapeHtml(group.name)}</strong>
+          <span class="badge">${group.source === "custom" ? "自定义" : group.source === "historical" ? "历史" : "默认"}</span>
+          <span class="badge">${group.usage_count || 0} 题</span>
+          ${group.active ? `<button class="warning" type="button" onclick="archiveTaxonomyGroup(${groupIndex})">删除</button>` : '<span class="badge">已停用</span>'}
+        </div>
+        ${(group.categories || []).map((category, categoryIndex) => `
+          <div class="taxonomy-item ${category.active ? "" : "inactive"}">
+            <span>${escapeHtml(category.name)}</span>
+            <span>${category.usage_count || 0} 题</span>
+            ${category.active ? `<button class="warning" type="button" onclick="archiveTaxonomyCategory(${groupIndex},${categoryIndex})">删除</button>` : '<span>已停用</span>'}
+          </div>
+        `).join("")}
+        ${group.active ? `<div class="taxonomy-add">
+          <input id="new-category-${groupIndex}" type="text" maxlength="24" placeholder="新增二级题型">
+          <button type="button" onclick="addTaxonomyCategory(${groupIndex})">添加题型</button>
+        </div>` : ""}
+      </section>
+    `).join("") || '<div class="empty">暂无分类</div>';
+  }
+
+  function archiveTaxonomyGroup(groupIndex) {
+    const group = taxonomyDraft.groups[groupIndex];
+    const count = group.usage_count || 0;
+    if (!window.confirm(`停用“${group.name}”及其全部二级题型？${count ? `历史中有 ${count} 道题会保留原标签。` : ""}`)) return;
+    group.active = false;
+    (group.categories || []).forEach(category => { category.active = false; });
+    renderTaxonomyEditor();
+  }
+
+  function archiveTaxonomyCategory(groupIndex, categoryIndex) {
+    const category = taxonomyDraft.groups[groupIndex].categories[categoryIndex];
+    const count = category.usage_count || 0;
+    if (!window.confirm(`停用“${category.name}”？${count ? `历史中有 ${count} 道题会保留原标签。` : ""}`)) return;
+    category.active = false;
+    renderTaxonomyEditor();
+  }
+
+  function addTaxonomyCategory(groupIndex) {
+    const input = document.querySelector(`#new-category-${groupIndex}`);
+    const name = input.value.trim();
+    if (!name) {
+      statusNode.textContent = "请输入二级题型名称";
+      return;
+    }
+    taxonomyDraft.groups[groupIndex].categories.push({
+      id: null, name, source: "custom", active: true, usage_count: 0
+    });
+    renderTaxonomyEditor();
+  }
+
+  document.querySelector("#add-group").addEventListener("click", () => {
+    const input = document.querySelector("#new-group-name");
+    const name = input.value.trim();
+    if (!name) {
+      statusNode.textContent = "请输入一级领域名称";
+      return;
+    }
+    taxonomyDraft.groups.push({
+      id: null, name, source: "custom", active: true, usage_count: 0, categories: []
+    });
+    input.value = "";
+    renderTaxonomyEditor();
   });
 
-  document.querySelector("#sample").addEventListener("click", () =>
-    start(() => api("/api/batches/import-sample", { method: "POST" }), "正在导入 Sample…")
-  );
+  async function saveTaxonomy() {
+    if (!taxonomyDraft) return;
+    const saveButton = document.querySelector("#save-taxonomy");
+    saveButton.disabled = true;
+    try {
+      const result = await api("/api/taxonomy", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          expected_revision: taxonomyDraft.revision,
+          groups: taxonomyDraft.groups
+        })
+      });
+      taxonomyConfig = result;
+      applyTaxonomyConfig(result);
+      closeTaxonomyManager();
+      if (viewMode === "assets") await loadAssets();
+      else if (currentBatch) render(currentBatch);
+      statusNode.textContent = "分类配置已保存";
+    } catch (error) {
+      statusNode.textContent = error.message;
+    } finally {
+      saveButton.disabled = false;
+    }
+  }
+
+  document.querySelector("#manage-taxonomy").addEventListener("click", openTaxonomyManager);
+  document.querySelector("#close-taxonomy").addEventListener("click", closeTaxonomyManager);
+  document.querySelector("#cancel-taxonomy").addEventListener("click", closeTaxonomyManager);
+  taxonomyBackdrop.addEventListener("click", closeTaxonomyManager);
+  document.querySelector("#save-taxonomy").addEventListener("click", saveTaxonomy);
+
+  const supportedExtensions = new Set(["jpg", "jpeg", "png", "webp", "heic"]);
+
+  async function uploadFiles(selectedFiles) {
+    const entries = selectedFiles.map(item => item.file ? item : ({
+      file: item,
+      relativePath: item.name
+    }));
+    const files = entries.filter(item => {
+      const extension = item.file.name.split(".").pop().toLowerCase();
+      return supportedExtensions.has(extension);
+    });
+    const skipped = entries.length - files.length;
+    if (!files.length) {
+      statusNode.textContent = "所选内容中没有支持的图片";
+      return;
+    }
+    if (files.length > 200) {
+      statusNode.textContent = `一次最多处理 200 张图片，当前选择 ${files.length} 张`;
+      return;
+    }
+    const form = new FormData();
+    files.forEach(item => {
+      form.append("files", item.file, item.relativePath || item.file.name);
+    });
+    const skippedText = skipped ? `，跳过 ${skipped} 个非图片文件` : "";
+    await start(
+      () => api("/api/batches", { method: "POST", body: form }),
+      `正在导入 ${files.length} 张图片${skippedText}…`
+    );
+  }
+
+  document.querySelector("#files").addEventListener("change", async event => {
+    await uploadFiles([...event.target.files]);
+    event.target.value = "";
+  });
+
+  async function collectDirectoryFiles(directory, prefix = directory.name) {
+    const files = [];
+    for await (const [name, handle] of directory.entries()) {
+      const relativePath = `${prefix}/${name}`;
+      if (handle.kind === "file") {
+        files.push({ file: await handle.getFile(), relativePath });
+      } else if (handle.kind === "directory") {
+        files.push(...await collectDirectoryFiles(handle, relativePath));
+      }
+    }
+    return files;
+  }
+
+  document.querySelector("#folder").addEventListener("click", async () => {
+    if (!window.showDirectoryPicker) {
+      document.querySelector("#folder-fallback").click();
+      return;
+    }
+    try {
+      const directory = await window.showDirectoryPicker({ mode: "read" });
+      statusNode.textContent = "正在读取文件夹…";
+      await uploadFiles(await collectDirectoryFiles(directory));
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        statusNode.textContent = `读取文件夹失败：${error.message}`;
+      }
+    }
+  });
+
+  document.querySelector("#folder-fallback").addEventListener("change", async event => {
+    const files = [...event.target.files].map(file => ({
+      file,
+      relativePath: file.webkitRelativePath || file.name
+    }));
+    await uploadFiles(files);
+    event.target.value = "";
+  });
 
   async function start(operation, message) {
     clearInterval(timer);
     statusNode.textContent = message;
+    bulkAcceptButton.disabled = true;
     try {
       const batch = await operation();
       batchId = batch.id;
+      viewMode = "current";
+      currentViewButton.classList.remove("inactive");
+      assetViewButton.classList.add("inactive");
       render(batch);
+      const summary = batch.import_summary;
+      if (summary) {
+        statusNode.textContent += ` · 导入 ${summary.imported_count} 张`;
+      }
       timer = setInterval(refresh, 1500);
     } catch (error) {
       statusNode.textContent = error.message;
@@ -112,7 +513,8 @@
     if (!batchId) return;
     try {
       const batch = await api(`/api/batches/${batchId}`);
-      render(batch);
+      currentBatch = batch;
+      if (viewMode === "current") render(batch);
       if (!["processing"].includes(batch.status)) clearInterval(timer);
     } catch (error) {
       clearInterval(timer);
@@ -121,16 +523,34 @@
   }
 
   function render(batch) {
+    currentBatch = batch;
     const counts = batch.problems.reduce((map, item) => {
       map[item.status] = (map[item.status] || 0) + 1;
       return map;
     }, {});
-    statusNode.textContent = `批次 ${batch.id.slice(0, 8)} · ${batch.status} · ${batch.problems.length} 道题`;
+    const query = searchInput.value.trim().toLowerCase();
+    const visible = batch.problems.filter(item => {
+      const group = item.category_group || "未分类";
+      const category = item.category_key || item.category || "未分类";
+      if (groupFilter.value && group !== groupFilter.value) return false;
+      if (categoryFilter.value && category !== categoryFilter.value) return false;
+      if (query && !`${item.filename || ""}\n${item.ocr_text || ""}`.toLowerCase().includes(query)) return false;
+      return true;
+    }).sort((left, right) => {
+      const a = new Date(left.accepted_at || left.created_at || 0).getTime();
+      const b = new Date(right.accepted_at || right.created_at || 0).getTime();
+      return timeSort.value === "oldest" ? a - b : b - a;
+    });
+    statusNode.textContent = `批次 ${batch.id.slice(0, 8)} · ${batch.status} · 显示 ${visible.length}/${batch.problems.length} 道题`;
     const pending = batch.problems.some(item => item.review_status === "pending");
     const processing = batch.problems.some(item => ["queued", "processing"].includes(item.status));
     exportButton.disabled = processing || pending || !batch.problems.length;
+    markdownButton.disabled = processing || viewMode !== "current" ||
+      !batch.problems.some(item => item.markdown_exportable);
     partialButton.disabled = processing || !batch.problems.some(item => item.status === "ready");
-    problemsNode.innerHTML = batch.problems.map(problemCard).join("") || '<div class="empty">暂无题目</div>';
+    bulkAcceptButton.disabled = processing || !pending || viewMode !== "current";
+    problemsNode.innerHTML = visible.map(item => problemCard(item, true)).join("") || '<div class="empty">没有符合筛选条件的题目</div>';
+    initializeFormulaPreviews();
   }
 
   function escapeHtml(value) {
@@ -139,28 +559,272 @@
     })[char]);
   }
 
-  function problemCard(item) {
-    const reasons = item.metrics?.review_reasons || (item.error ? [item.error] : []);
-    const isReview = item.review_status === "pending";
+  function formatDate(value) {
+    if (!value) return "时间未知";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toLocaleString("zh-CN", {
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit"
+    });
+  }
+
+  function groupOptions(selected) {
+    return '<option value="">选择领域</option>' + taxonomy.map(group =>
+      `<option value="${escapeHtml(group.name)}" ${group.name === selected ? "selected" : ""}>${escapeHtml(group.name)}</option>`
+    ).join("");
+  }
+
+  function categoryOptions(groupName, selected) {
+    const group = taxonomy.find(item => item.name === groupName);
+    return '<option value="">选择题型</option>' + (group?.categories || []).map(category =>
+      `<option value="${escapeHtml(category)}" ${category === selected ? "selected" : ""}>${escapeHtml(category)}</option>`
+    ).join("");
+  }
+
+  function updateEditorCategories(problemId) {
+    const group = document.querySelector(`#group-${problemId}`).value;
+    document.querySelector(`#category-${problemId}`).innerHTML = categoryOptions(group, "");
+  }
+
+  const formulaPreviewTimers = new Map();
+
+  function formulaStateLabel(state) {
+    return ({
+      auto_verified: "模型双重校验通过",
+      needs_review: "需要人工校正",
+      human_verified: "已人工校正",
+      human_verified_image: "已确认保留图像",
+      image_fallback: "当前使用公式截图"
+    })[state] || state || "状态未知";
+  }
+
+  function formulaEditor(item, editable) {
+    const formulas = item.formulas || [];
+    if (!formulas.length) return "";
+    return `<section class="formula-review">
+      <h3>公式识别与 LaTeX 校正</h3>
+      ${formulas.map((formula, index) => `
+        <div class="formula-item">
+          <div>
+            <div class="meta-row"><span>原始公式</span></div>
+            <img class="formula-crop" src="${formula.original_url || formula.clean_url || ""}" alt="原始公式">
+          </div>
+          <div>
+            <div class="meta-row"><span>白底公式</span></div>
+            <img class="formula-crop" src="${formula.clean_url || formula.original_url || ""}" alt="白底公式">
+          </div>
+          <div class="formula-edit">
+            <div class="meta-row">
+              <span class="badge ${formula.recognition_state === "needs_review" ? "review" : ""}">${escapeHtml(formulaStateLabel(formula.recognition_state))}</span>
+              <span>置信度 ${Math.round((formula.mean_token_probability || 0) * 100)}%</span>
+            </div>
+            <input class="formula-latex" id="formula-${item.id}-${index}" data-problem-id="${item.id}" data-formula-id="${escapeHtml(formula.formula_id)}" data-original-latex="${escapeHtml(formula.latex || formula.model_latex || "")}" type="text" value="${escapeHtml(formula.latex || formula.model_latex || "")}" ${editable ? "" : "disabled"} oninput="scheduleFormulaPreview('${item.id}', ${index})">
+            <div class="formula-preview" id="formula-preview-${item.id}-${index}"></div>
+            <div class="formula-error" id="formula-error-${item.id}-${index}"></div>
+            ${editable ? `<div class="button-row">
+              <button class="formula-choice" data-formula-mode="image" aria-pressed="${formula.recognition_state === "human_verified_image"}" type="button" onclick="keepFormulaImage('${item.id}', ${index})">保持图像识别</button>
+              <button class="formula-choice" data-formula-mode="latex" aria-pressed="${formula.recognition_state === "human_verified"}" type="button" onclick="confirmFormula('${item.id}', ${index})">确认使用此公式</button>
+            </div>` : ""}
+          </div>
+        </div>
+      `).join("")}
+    </section>`;
+  }
+
+  function initializeFormulaPreviews() {
+    document.querySelectorAll(".formula-latex").forEach(input => {
+      const parts = input.id.match(/^formula-(.+)-(\d+)$/);
+      if (parts) scheduleFormulaPreview(parts[1], Number(parts[2]), 0);
+    });
+  }
+
+  function scheduleFormulaPreview(problemId, index, delay = 280) {
+    const key = `${problemId}-${index}`;
+    clearTimeout(formulaPreviewTimers.get(key));
+    formulaPreviewTimers.set(key, setTimeout(
+      () => previewFormula(problemId, index),
+      delay
+    ));
+  }
+
+  async function previewFormula(problemId, index) {
+    const input = document.querySelector(`#formula-${problemId}-${index}`);
+    const preview = document.querySelector(`#formula-preview-${problemId}-${index}`);
+    const errorNode = document.querySelector(`#formula-error-${problemId}-${index}`);
+    if (!input || !preview || !errorNode) return;
+    if (!input.value.trim()) {
+      preview.textContent = "";
+      errorNode.textContent = "请输入 LaTeX 公式";
+      return;
+    }
+    try {
+      const result = await api("/api/formulas/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latex: input.value })
+      });
+      preview.innerHTML = result.mathml;
+      errorNode.textContent = "";
+    } catch (error) {
+      preview.textContent = input.value;
+      errorNode.textContent = error.message;
+    }
+  }
+
+  function setFormulaChoiceState(buttons, mode) {
+    buttons.forEach(button => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.formulaMode === mode)
+      );
+    });
+  }
+
+  async function updateFormulaChoice(problemId, index, mode) {
+    const input = document.querySelector(`#formula-${problemId}-${index}`);
+    const item = (currentBatch?.problems || []).find(problem => problem.id === problemId);
+    const formula = item?.formulas?.[index];
+    if (!input || !item || !formula) {
+      throw new Error("当前公式数据已变化，请刷新页面后重试");
+    }
+    const buttons = [
+      ...(input.closest(".formula-edit")?.querySelectorAll("button") || [])
+    ];
+    const previousMode = buttons.find(
+      button => button.getAttribute("aria-pressed") === "true"
+    )?.dataset.formulaMode || "";
+    setFormulaChoiceState(buttons, mode);
+    buttons.forEach(button => { button.disabled = true; });
+    try {
+      const latex = input.value.trim();
+      if (mode === "latex" && !latex) {
+        throw new Error("请输入要确认的 LaTeX 公式");
+      }
+      statusNode.textContent = mode === "image"
+        ? "正在保留公式图像并重建题目…"
+        : "正在确认公式并重建题目…";
+      const updated = await api(`/api/problems/${problemId}/formulas`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          updated_at: item.updated_at,
+          formulas: [{
+            formula_id: formula.formula_id,
+            mode,
+            ...(mode === "latex" ? { latex } : {})
+          }]
+        })
+      });
+      Object.assign(item, updated);
+      if (viewMode === "assets") await loadAssets(); else await refresh();
+      statusNode.textContent = mode === "image"
+        ? "已确认保持图像识别，导出时将使用公式图像"
+        : "已确认使用此公式，题干和白底重建结果已刷新";
+    } catch (error) {
+      statusNode.textContent = error.message;
+      setFormulaChoiceState(buttons, previousMode);
+      buttons.forEach(button => { button.disabled = false; });
+      throw error;
+    }
+  }
+
+  async function keepFormulaImage(problemId, index) {
+    try {
+      await updateFormulaChoice(problemId, index, "image");
+    } catch (_) {}
+  }
+
+  async function confirmFormula(problemId, index) {
+    try {
+      await updateFormulaChoice(problemId, index, "latex");
+    } catch (_) {}
+  }
+
+  async function saveFormulaCorrections(problemId) {
+    const item = (currentBatch?.problems || []).find(problem => problem.id === problemId);
+    const formulas = item?.formulas || [];
+    const unresolved = formulas.filter(formula =>
+      ["needs_review", "image_fallback"].includes(formula.recognition_state)
+    );
+    const unresolvedIds = new Set(unresolved.map(formula => formula.formula_id));
+    const inputs = [...document.querySelectorAll(
+      `.formula-latex[data-problem-id="${problemId}"]`
+    )];
+    if (unresolved.length && !inputs.length) {
+      throw new Error("请先显示并校正该题的待确认公式");
+    }
+    const edits = inputs.filter(input =>
+      input.value !== input.dataset.originalLatex ||
+      unresolvedIds.has(input.dataset.formulaId)
+    ).map(input => ({
+      formula_id: input.dataset.formulaId,
+      latex: input.value
+    }));
+    if (!edits.length) return item;
+    const updated = await api(`/api/problems/${problemId}/formulas`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ updated_at: item.updated_at, formulas: edits })
+    });
+    Object.assign(item, updated);
+    return item;
+  }
+
+  function problemCard(item, interactive = true) {
+    const diagnostics = item.review_diagnostics || [];
+    const isReview = interactive && item.review_status === "pending";
+    const group = item.category_group || "未分类";
+    const category = item.category_key || item.category || "未分类";
+    const displayTime = item.accepted_at || item.created_at;
+    const sourceLabel = item.source_relative_path || item.filename;
     return `
       <article class="problem">
         <div class="problem-head">
-          <strong>${escapeHtml(item.filename)}</strong>
+          <div>
+            <strong>${escapeHtml(item.split_label ? `${item.split_label} · ${item.filename}` : item.filename)}</strong>
+            <div class="meta-row">
+              <span>${escapeHtml(formatDate(displayTime))}</span>
+              <span>${escapeHtml(sourceLabel)}</span>
+              ${item.page_total ? `<span>整页第 ${item.page_index}/${item.page_total} 题</span>` : ""}
+            </div>
+          </div>
           <span class="badge ${isReview ? "review" : ""}">${escapeHtml(item.status)}</span>
         </div>
         <div class="comparison">
           <figure><figcaption>展平及背景校正</figcaption><img loading="lazy" src="${item.images.normalized}" onerror="this.style.opacity=.15"></figure>
-          <figure><figcaption>题干与配图提取结果</figcaption><img loading="lazy" src="${item.images.cleaned}" onerror="this.style.opacity=.15"></figure>
+          <figure><figcaption>V2 白底重建结果</figcaption><img loading="lazy" src="${item.images.cleaned}" onerror="this.style.opacity=.15"></figure>
         </div>
         <div class="details">
-          <div><b>分类：</b>${escapeHtml(item.category || "处理中")}</div>
-          <div><b>识别置信度：</b>${Math.round((item.confidence || 0) * 100)}%</div>
-          ${reasons.map(reason => `<div class="reason">需确认：${escapeHtml(reason)}</div>`).join("")}
-          <div class="ocr">${escapeHtml(item.ocr_text || "")}</div>
+          <div class="category-line">
+            <b>题型：</b>
+            <span class="badge group">${escapeHtml(group)}</span>
+            <span class="badge">${escapeHtml(category)}</span>
+            ${item.tags?.active === false ? '<span class="badge review">分类已停用</span>' : ""}
+          </div>
+          <div class="meta-row">
+            <span>OCR ${Math.round((item.confidence || 0) * 100)}%</span>
+            <span>分类 ${Math.round((item.category_confidence || 0) * 100)}%</span>
+            ${item.summary ? `<span>${escapeHtml(item.summary)}</span>` : ""}
+          </div>
+          ${diagnostics.map(diagnostic => `
+            <div class="diagnostic ${escapeHtml(diagnostic.severity || "warning")}">
+              <strong>${escapeHtml(diagnostic.title || "复核提示")}</strong>
+              <span>${escapeHtml(diagnostic.detail || "")}</span>
+            </div>
+          `).join("")}
+          ${formulaEditor(item, isReview)}
+          ${isReview ? `
+            <div class="edit-classification">
+              <label>一级领域<select id="group-${item.id}" onchange="updateEditorCategories('${item.id}')">${groupOptions(group)}</select></label>
+              <label>二级题型<select id="category-${item.id}">${categoryOptions(group, category)}</select></label>
+            </div>
+            <label>印刷题干<textarea id="text-${item.id}">${escapeHtml(item.ocr_text || "")}</textarea></label>
+          ` : `<div class="ocr">${escapeHtml(item.ocr_text || "")}</div>`}
           ${isReview ? `<div class="actions">
-            <button onclick="review('${item.id}','accept_cleaned')">接受清理结果</button>
+            <button onclick="saveCorrection('${item.id}')">保存修订并接受</button>
+            <button class="secondary" onclick="review('${item.id}','accept_cleaned')">直接接受重建结果</button>
             <button class="secondary" onclick="review('${item.id}','accept_normalized')">保留原标注</button>
-            <button class="warning" onclick="review('${item.id}','exclude')">排除</button>
+            <button class="warning" onclick="review('${item.id}','exclude')">需重拍并删除</button>
           </div>` : ""}
         </div>
       </article>`;
@@ -168,28 +832,110 @@
 
   async function review(problemId, action) {
     try {
-      await api(`/api/problems/${problemId}/review`, {
+      const result = await api(`/api/problems/${problemId}/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action })
       });
-      await refresh();
+      if (viewMode === "assets") await loadAssets(); else await refresh();
+      statusNode.textContent = result.message || "操作已完成";
     } catch (error) { statusNode.textContent = error.message; }
   }
 
-  async function createPdf(allowPartial) {
-    if (!batchId) return;
+  async function saveCorrection(problemId) {
     try {
-      const result = await api(`/api/batches/${batchId}/export`, {
+      await saveFormulaCorrections(problemId);
+      const result = await saveProblemCorrection(problemId);
+      if (viewMode === "assets") await loadAssets(); else await refresh();
+      statusNode.textContent = result.message || "已保存到已处理资产";
+    } catch (error) { statusNode.textContent = error.message; }
+  }
+
+  function saveProblemCorrection(problemId) {
+    return api(`/api/problems/${problemId}/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "set_category",
+        category_group: document.querySelector(`#group-${problemId}`).value,
+        category: document.querySelector(`#category-${problemId}`).value,
+        ocr_text: document.querySelector(`#text-${problemId}`).value
+      })
+    });
+  }
+
+  async function saveAllCorrections() {
+    const pending = (currentBatch?.problems || []).filter(
+      item => item.review_status === "pending"
+    );
+    if (!pending.length) return;
+    bulkAcceptButton.disabled = true;
+    let completed = 0;
+    try {
+      for (const item of pending) {
+        statusNode.textContent = `正在保存 ${completed + 1}/${pending.length}：${item.filename}`;
+        await saveFormulaCorrections(item.id);
+        await saveProblemCorrection(item.id);
+        completed += 1;
+      }
+      await refresh();
+      statusNode.textContent = `已保存并接受 ${completed} 道题`;
+    } catch (error) {
+      await refresh();
+      const failed = pending[completed];
+      statusNode.textContent = `已保存 ${completed} 道；在“${failed?.filename || "未知题目"}”处停止：${error.message}`;
+    }
+  }
+
+  async function createDocx(allowPartial) {
+    if (!batchId) return;
+    exportButton.disabled = true;
+    statusNode.textContent = "正在生成 Word DOCX…";
+    try {
+      const result = await api(`/api/batches/${batchId}/export-docx`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ allow_partial: allowPartial })
       });
+      statusNode.textContent = "Word DOCX 已生成";
       window.location.href = result.download_url;
-    } catch (error) { statusNode.textContent = error.message; }
+    } catch (error) {
+      statusNode.textContent = error.message;
+    } finally {
+      if (currentBatch) {
+        const pending = currentBatch.problems.some(item => item.review_status === "pending");
+        const processing = currentBatch.problems.some(item => ["queued", "processing"].includes(item.status));
+        exportButton.disabled = processing || pending || !currentBatch.problems.length;
+      }
+    }
   }
-  exportButton.addEventListener("click", () => createPdf(false));
-  partialButton.addEventListener("click", () => createPdf(true));
+
+  async function createMarkdown() {
+    if (!batchId || !currentBatch) return;
+    markdownButton.disabled = true;
+    statusNode.textContent = "正在生成 Obsidian Markdown…";
+    try {
+      const result = await api(`/api/batches/${batchId}/export-markdown`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ allow_partial: false })
+      });
+      statusNode.textContent = "Obsidian Markdown 已生成";
+      window.location.href = result.download_url;
+    } catch (error) {
+      statusNode.textContent = error.message;
+    } finally {
+      const processing = currentBatch.problems.some(
+        item => ["queued", "processing"].includes(item.status)
+      );
+      markdownButton.disabled = processing || viewMode !== "current" ||
+        !currentBatch.problems.some(item => item.markdown_exportable);
+    }
+  }
+  exportButton.addEventListener("click", () => createDocx(false));
+  markdownButton.addEventListener("click", createMarkdown);
+  partialButton.addEventListener("click", () => createDocx(true));
+  bulkAcceptButton.addEventListener("click", saveAllCorrections);
 </script>
 </body>
 </html>
