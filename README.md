@@ -17,6 +17,23 @@ Intel Mac 可以继续使用 macOS Vision，但 PaddlePaddle 3.3 不再提供 In
 
 建议至少 16GB 内存。主虚拟环境、UVDoc、PaddleOCR、Pix2Text 和 UniMERNet Tiny 安装完成后通常占用 6–10GB；首次安装需要访问 GitHub、PyPI、PaddlePaddle 软件源和 Hugging Face。
 
+## 一键安装
+
+下载或克隆仓库后，可以直接运行根目录的安装程序。脚本会检查系统工具、创建 `.venv`、安装项目依赖并下载全部运行模型；中断后可以重复执行。
+
+Windows：双击 `Install.bat`。脚本通过 `winget` 安装缺少的 Git 和 Python 3.11，然后完成其余环境配置。如果系统没有 `winget`，请先从 Microsoft Store 安装“应用安装程序”。
+
+macOS：双击 `Install.command`，或在终端执行：
+
+```bash
+chmod +x Install.command
+./Install.command
+```
+
+脚本会安装或检查 Xcode Command Line Tools、Homebrew、Python 3.11、Git 和 Tesseract。Xcode 首次安装会弹出 Apple 系统窗口；如果安装没有在等待时间内完成，完成系统安装后再次运行脚本即可。
+
+安装过程记录在根目录的 `install.log`。模型约占 6–10GB，安装时间主要取决于网络速度。
+
 ## 首次安装
 
 ### macOS / Linux
@@ -30,7 +47,7 @@ xcode-select --install
 然后执行：
 
 ```bash
-git clone git@github.com:flynncat/MistakeNotebook.git
+git clone https://github.com/flynncat/MistakeNotebook.git
 cd MistakeNotebook
 python3.11 -m venv .venv
 source .venv/bin/activate
@@ -45,7 +62,7 @@ mistake-book --root .
 安装 64 位 Python 3.11 和 Git，然后执行：
 
 ```powershell
-git clone git@github.com:flynncat/MistakeNotebook.git
+git clone https://github.com/flynncat/MistakeNotebook.git
 Set-Location MistakeNotebook
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1

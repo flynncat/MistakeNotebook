@@ -10,6 +10,7 @@ Desktop.ini
 .venv/
 venv/
 env/
+*-venv/
 *.egg-info/
 build/
 dist/
@@ -36,6 +37,10 @@ models/weights/
 models/**/*.pth
 models/**/*.pkl
 models/**/*.onnx
+models/**/*.safetensors
+models/**/*.bin
+**/.cache/huggingface/
+*.incomplete
 Sample/
 目标效果/
 .superpowers/

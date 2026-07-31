@@ -29,7 +29,7 @@ def _checkout(root: Path, name: str, url: str, commit: str) -> Path:
 
 
 def main() -> None:
-    root = Path.cwd().resolve()
+    root = Path(__file__).resolve().parents[1]
     manifest = load_manifest(root)
     by_id = {item["id"]: item for item in manifest["models"]}
     for name, (url, commit) in REPOSITORIES.items():

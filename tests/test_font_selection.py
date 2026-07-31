@@ -18,3 +18,11 @@ def test_missing_chinese_sans_font_fails_clearly(monkeypatch) -> None:
     monkeypatch.setattr(font_selection, "_REGULAR_CANDIDATES", ())
     with pytest.raises(RuntimeError, match="缺少支持中文"):
         font_selection.load_print_font(24)
+
+
+def test_windows_chinese_fonts_are_portable_candidates() -> None:
+    regular_names = {path.name.lower() for path, _, _ in font_selection._REGULAR_CANDIDATES}
+    bold_names = {path.name.lower() for path, _, _ in font_selection._BOLD_CANDIDATES}
+
+    assert {"msyh.ttc", "simhei.ttf"} <= regular_names
+    assert {"msyhbd.ttc", "simhei.ttf"} <= bold_names

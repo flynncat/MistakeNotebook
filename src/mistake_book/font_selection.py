@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import asdict, dataclass
+import os
 from pathlib import Path
 
 from PIL import ImageFont
@@ -22,9 +23,12 @@ class FontProfile:
 
 
 _USER_FONT_DIR = Path.home() / "Library" / "Fonts"
+_WINDOWS_FONT_DIR = Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts"
 _REGULAR_CANDIDATES = (
     (_USER_FONT_DIR / "msyh.ttc", 0, "微软雅黑"),
     (Path("/Library/Fonts/msyh.ttc"), 0, "微软雅黑"),
+    (_WINDOWS_FONT_DIR / "msyh.ttc", 0, "微软雅黑"),
+    (_WINDOWS_FONT_DIR / "simhei.ttf", 0, "黑体"),
     (Path("/System/Library/Fonts/STHeiti Light.ttc"), 1, "黑体"),
     (Path("/System/Library/Fonts/STHeiti Light.ttc"), 0, "黑体"),
     (Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"), 0, "Noto Sans CJK"),
@@ -33,6 +37,8 @@ _REGULAR_CANDIDATES = (
 _BOLD_CANDIDATES = (
     (_USER_FONT_DIR / "msyhbd.ttc", 0, "微软雅黑"),
     (Path("/Library/Fonts/msyhbd.ttc"), 0, "微软雅黑"),
+    (_WINDOWS_FONT_DIR / "msyhbd.ttc", 0, "微软雅黑"),
+    (_WINDOWS_FONT_DIR / "simhei.ttf", 0, "黑体"),
     (Path("/System/Library/Fonts/STHeiti Medium.ttc"), 1, "黑体"),
     (Path("/System/Library/Fonts/STHeiti Medium.ttc"), 0, "黑体"),
     *_REGULAR_CANDIDATES,
